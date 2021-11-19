@@ -1,0 +1,236 @@
+<!--DOCTYPE html>-->
+<html lang="ja">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+  <link rel="stylesheet" href="css/flat-ui.min.css" />
+  <link rel="stylesheet" href="css/index.css" />
+  <link rel="stylesheet" href="css/table.css" />
+  <!--
+    <script src="https://cdn.jsdelivr.net/npm/moment@2.24.0/min/moment.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-streaming@1.8.0"></script>
+    -->
+
+  <!-- ライブラリを読み込む -->
+
+  <script type="text/javascript" src="js/moment.min.js"></script>
+  <script type="text/javascript" src="js/Chart.js"></script>
+  <script type="text/javascript" src="js/chartjs-plugin-streaming.js"></script>
+
+  <script type="text/javascript" src="main.js"></script>
+
+  <title>RTG_BLE</title>
+</head>
+
+<body>
+  <div class="container">
+    <h4>RTG BLE 　esp32</h4>
+    <h4 align="right" id="realtime"></h4>
+  </div>
+
+  <div class="contents">
+    <div class="search-button" onclick="">
+      <a href="#fakelink" class="btn btn-block btn-lg btn-primary">BLE Scan</a>
+
+    </div>
+
+
+    <div class="settings">
+      <label>Lp:
+        <input class="btn btn-default" id="LpDisp" readonly>
+      </label>
+
+      <label>FS:
+        <input class="btn btn-default" id="cal" type="number" value="100" min="60" max="120" step="0.1" oninput="ChangeCal()">
+      </label>
+      <label>Max:
+        <input class="btn btn-default" id="MaxRange" type="number" value="100" min="40" max="120" step="10" oninput="ChangeRange()">
+      </label>
+      <label>Min:
+        <input class="btn btn-default"  id="MinRange" type="number" value="40" min="10" max="60" step="10" oninput="ChangeRange()">
+      </label>
+    </div>
+  </div>
+
+
+
+  <datalist id="list">
+    <option value=120></option>
+    <option value=110></option>
+    <option value=100></option>
+    <option value=90></option>
+    <option value=80></option>
+    <option value=70></option>
+  </datalist>
+
+  <br>
+
+
+  <div id="chart-container" style="position: relative;width: 100%; height: 300px;">
+    <canvas id="myChart"></canvas>
+  </div>
+  <!--  <div class="pointerlog">
+    <label>
+      <input id="LogDisp" readonly>
+  </div>
+-->
+  <!--<div id="chart-container2" style="position: relative;width: 100%; height: 300px;">
+    <canvas id="myChart2"></canvas>
+
+  </div>-->
+
+  <!-- Square switch -->
+
+
+  <button class="btn btn-default" onclick="saveCanvas()">Save Chart</button>
+
+
+  <p> </p>
+<!--
+  <div class="lx_table">
+    <table id="tableArea">
+      <tr>
+        <th>Max</th>
+        <th>L5</th>
+        <th>L10</th>
+        <th>L50</th>
+        <th>L95</th>
+        <th>Min</th>
+        <th>n</th>
+      </tr>
+      <tr>
+        <td id="Max">0</td>
+        <td id="L5">0</td>
+        <td id="L10">0</td>
+        <td id="L50">0</td>
+        <td id="L95">0</td>
+        <td id="Min">0</td>
+        <td id="num">0</td>
+      </tr>
+    </table>
+
+  </div>
+    <p> </p>
+
+  <div id="btn">
+    <button class="btn btn-default" onclick="onRefresh3()">Lx RESET</button>
+  </div>
+
+  -->
+
+    <details>
+      <summary></summary>
+      BLE Scan：M5StackBかESP32Bに接続  <br>
+      Lp：瞬時値 <br>
+      FS：フルスケールを入力　Cal入力し調整 <br>
+      Max・Min：グラフ表示変更
+    </details>
+
+</body>
+
+
+</html>
+
+<script>
+  let fileName = "";
+  let oldSec = "";
+  //----------------------------------
+  function twoDigit(num) {
+    let ret;
+    if (num < 10)
+      ret = "0" + num;
+    else
+      ret = num;
+    return ret;
+  }
+
+  function showClock() {
+    let nowTime = new Date();
+    let nowSec = twoDigit(nowTime.getSeconds());
+    if(oldSec !== nowSec){
+      oldSec = nowSec;
+      let nowYear = nowTime.getFullYear();
+      let nowMonth = twoDigit((nowTime.getMonth() + 1));
+      let nowDate = twoDigit(nowTime.getDate());
+
+      let nowHour = twoDigit(nowTime.getHours());
+      let nowMin = twoDigit(nowTime.getMinutes());
+      let msg = nowHour + ":" + nowMin + ":" + nowSec;
+
+      fileName = "" + nowYear + nowMonth + nowDate + "_" + nowHour + nowMin + nowSec + "_esp.jpg";
+      //let fileName = nowYear + nowMonth + nowDate + nowHour  + nowMin  + nowSec;
+
+      if ((nowMin == "00" || nowMin == "05" ||nowMin == "10" ||nowMin == "15" ||
+      nowMin == "20" ||nowMin == "25" ||nowMin == "30" ||nowMin == "35"||nowMin == "40"||
+      nowMin == "45" ||nowMin == "50"||nowMin == "55") && nowSec == "00" ) {
+      //      if ((nowMin == "00" || nowMin == "30") && nowSec == "00" ) {
+      //if ( nowSec == "00") {
+        saveCanvas();
+      }
+      document.getElementById("realtime").innerHTML = msg;
+    }
+  }
+  //setInterval('showClock()', 1000);
+  //----------------------------------
+
+
+  //window.setInterval(onRefresh3, 5000);
+  //window.setInterval(tableReflesh, 5000);
+  //window.setInterval(arrGet, 100);
+  window.setInterval(getLp, 1000);
+  window.setInterval(showClock, 500);
+  //window.setInterval(saveCanvas(), 5000);
+
+  function ChangeRange() {
+    maxRangeVal = document.getElementById('MaxRange').value;
+    minRangeVal = document.getElementById('MinRange').value;
+
+    //console.log(maxRangeVal);
+    window.myChart.config.options.scales.yAxes[0].ticks.max = +maxRangeVal;
+    window.myChart.config.options.scales.yAxes[0].ticks.min = +minRangeVal;
+    window.myChart.update({
+      duration: 0
+    });
+    window.myChart2.config.options.scales.yAxes[0].ticks.max = +maxRangeVal;
+    window.myChart2.config.options.scales.yAxes[0].ticks.min = +minRangeVal;
+    window.myChart2.update({
+      duration: 0
+    });
+  };
+
+
+  function saveCanvas() {
+    //console.log(fileName);
+    var canvas = document.getElementById('myChart');
+    var uri = canvas.toDataURL('image/jpeg', 0.85);
+    if (canvas.msToBlob) { //IE対応
+      var blob = toBlob(uri);
+      window.navigator.msSaveBlob(blob, fileName);
+    } else {
+      //アンカータグを作成
+      var a = document.createElement('a');
+      a.href = uri;
+      a.download = fileName;
+      //console.log(fileName);
+      //クリックイベントを発生させる
+      a.click();
+    }
+  };
+  /*  var context = document.getElementById('myChart');
+    context.addEventListener( 'click', function( evt ){
+        var item = window.myChart.getElementAtEvent( evt );
+        if( item.length == 0 ){
+            return;
+        }
+
+        item = item[0];
+        var index = item._index;
+        var item_data = item._chart.config.data.datasets;
+        alert( item_data[0]['data'][index] );
+    });
+    */
+</script>

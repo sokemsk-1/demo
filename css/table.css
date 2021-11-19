@@ -1,0 +1,99 @@
+table {
+  border-collapse: separate;
+  border: 0px solid #EEE;
+
+  /*width: 50%;*/
+  table-layout: fixed;
+
+}
+
+th {
+  background-color: #BDC3C9;
+  color: #FFF;
+  text-align: center;
+  border: 1px solid #EEE;
+  width: 60px;
+  height: 30px;
+  border-radius: 3px;
+}
+
+td {
+  background-color: #BDC3C9;
+  border: 1px solid #EEE;
+  color: #FFF;
+
+  /*padding: 0.3em 0.5em;  /* 文字周りのスペース（パディング） */
+  text-align: center;
+  width: 60px;
+  height: 30px;
+  border-radius: 3px;
+
+}
+
+.btnspinner{
+    -ms-user-select: none;
+    -moz-user-select: -moz-none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+.settings input{
+    /*padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;*/
+    font-size: 15px;
+
+    width: 80px;
+    text-align : center ;
+    vertical-align: middle;
+    /* デフォルトのスピナーを消す */
+    -webkit-appearance: none;
+    -moz-appearance:textfield;
+}
+
+.LP input{
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 15px;
+    width: 300px;
+    text-align : center ;
+    vertical-align: middle;
+    /* デフォルトのスピナーを消す */
+    -webkit-appearance: none;
+    -moz-appearance:textfield;
+}
+
+.pointerlog input{
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 9px;
+    width: 300px;
+    height: 20px;
+    /* デフォルトのスピナーを消す */
+    -webkit-appearance: none;
+    -moz-appearance:textfield;
+}
+.pointerlog{
+  display: flex;
+  justify-content: flex-end;
+  overflow:auto;
+}
+
+.spinner_area input[type="button"]{
+    cursor: pointer;
+}
+
+.contents{
+  display: flex;
+  justify-content: space-between;
+  align-items:center
+}
+
+.lx_table{
+
+  display: flex;
+
+}
